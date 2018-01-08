@@ -1,0 +1,33 @@
+<html>
+<head></head>
+<body>
+<a href="/home/"><button>Goto home page</button></a>
+<form action="/logoutrequest/" method="post"><input type="submit" value="logout"/></form>
+<p style="font-size: large;font-style: italic;margin-top: 114px;margin-left: 56px;margin-right: 56px;">
+{% if type == 'city' %}
+    "{{value_obj.Name}} is a city in {{value_obj.District}} district of <a href="/countrydetail/{{value_obj.CountryCode.Code}}">{{value_obj.CountryCode.Name}}</a>. Total
+    population is {{value_obj.Population}}."
+{% elif type == 'country' %}
+    country name : <a href="/countrydetail/{{value_obj.Code}}">{{value_obj.Name}}</a><br>
+    continent : {{value_obj.Continent}}<br>
+    Region : {{value_obj.Region}}<br>
+    surface area : {{value_obj.SurfaceArea}}<br>
+    year of independence : {{value_obj.IndepYear}}<br>
+    population : {{value_obj.Population}}<br>
+    life expectancy : {{value_obj.LifeExpectancy}}<br>
+    GNP : {{value_obj.GNP}}<br>
+    GNP old : {{value_obj.GNPOld}}<br>
+    local name : {{value_obj.LocalName}}<br>
+    government form : {{value_obj.GovernmentForm}}<br>
+    head of state : {{value_obj.HeadOfState}}<br>
+    capital : {{value_obj.Capital}}<br>
+
+{% elif type == 'countrylanguage' %}
+    {{value_obj.0}} is a language spoken in following countries:<br><br>
+    {% for i in value_obj %}
+    <a href="/countrydetail/{{i.CountryCode.Code}}"> {{i.CountryCode}}</a>{{i.Percentage|floatformat:2 }}%){% if i.IsOfficial == 'T' %}(officially){% endif %}<br>
+    {% endfor %}
+{% endif %}
+</p>
+</body>
+</html>

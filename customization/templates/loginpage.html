@@ -1,0 +1,92 @@
+<html>
+<head>
+    <style>
+        #my_table{
+            width: 174px;
+            margin-left: 74px;
+            border: black solid;
+        }
+        #my_table tr {
+            border-bottom: 1px solid #ddd;
+        }
+        #my_table tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>SIGNIN</h1>
+        E-mail ID : <input id="email_id" type="text" name="email"/>
+        <button id="getotp_button_id" onclick="funotp()">Get OTP</button><br>
+         <table id="my_table">
+            {% for i in users %}
+            <tr>
+                <td>{{i.email}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        OTP : <input id="otp_id" type="text" name="otp"/><br>
+        <button id="signin_button_id" onclick="newsigninrequest()">signin</button><br>
+        not a user?<a href="/signup/">signup</a>
+</body>
+</html>
+<script>
+    var global_var_otp;
+    $(document).ready(function(){
+        $('#my_table').hide();
+    });
+    function funotp()
+    {
+        var email = $('#email_id').val();
+        var pass=0;
+        var table,tr,td,i;
+        table = document.getElementById("my_table");
+        tr = table.getElementsByTagName("tr");
+        for(i=0;i<tr.length;i++)
+        {
+            td = tr[i].getElementsByTagName("td")[0];
+            if(td.innerHTML == email){
+                pass=1;
+                break;
+            }
+        }
+        if(pass == 1){
+            var post_data = {'email':email}
+            $.ajax({
+                url:'/verifyuser/',
+                type:'POST',
+                data:post_data,
+                success:function(data,textStatus,xhr){
+                    global_var_otp = data['otp'];
+            },
+        });
+        }
+        else{
+            alert('user not registered! please signup');
+        }
+
+    }
+    function newsigninrequest()
+    {
+        var input_otp = $('#otp_id').val();
+        if(input_otp == global_var_otp)
+        {
+            var email = $('#email_id').val();
+            var post_data = {'email': email}
+            $.ajax({
+                url : '/newsigninrequest/',
+                type : 'POST',
+                data : post_data,
+                success : function(data, textStatus, xhr){
+                    window.location.href = '/home/';
+                },
+            });
+        }
+        else
+        {
+            global_var_otp = 0;
+            alert('incorrect otp. Regenerate otp');
+        }
+    }
+</script>

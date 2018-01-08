@@ -1,0 +1,40 @@
+<html>
+<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script></head>
+<body>
+    <h1>SIGNUP</h1>
+        E-mail ID : <input id="email_id" type="text" name="email"/><br>
+        First Name : <input id="firstname_id" type="text" name="first_name"/><br>
+        Last Name : <input id="lastname_id" type="text" name="last_name"/><br>
+        Phone Number : <input id="phonenumber_id" type="text" name="phone_number"/><br>
+        Gender : <input type="radio" name="gender" value="male" checked> Male
+                 <input type="radio" name="gender" value="female"> Female<br>
+        <button id="button_id" onclick="newsignuprequest()">signup</button><br>
+        already a user?<a href="/signin/">signin</a>
+
+</body>
+</html>
+<script>
+
+    function newsignuprequest()
+    {
+        var email = $('#email_id').val();
+        var first_name = $('#firstname_id').val();
+        var last_name = $('#lastname_id').val();
+        var phone_number = $('#phonenumber_id').val();
+        var gender = $("input[name='gender']:checked"). val();
+        var post_data = {'email':email,'first_name':first_name,'last_name':last_name,'phone_number':phone_number,'gender':gender}
+        $.ajax({
+            url:'/newsignuprequest/',
+            type:'POST',
+            data:post_data,
+            success:function(data,textStatus,xhr){
+                alert("user registered. Now signin");
+                window.location.href = "/signin";
+            },
+            error:function(XMLHTTPRequest, textStatus, errorThrown){
+                alert("user already registered. Please signin or signup with diffrent email id");
+                window.location.href = "/signup/";
+            },
+        });
+    }
+</script>

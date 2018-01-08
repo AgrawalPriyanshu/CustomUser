@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #my_input{
+            background-image: url('/css/searchicon.png');
+            width: 60%;
+            margin-top: 114px;
+            margin-left: 56px;
+        }
+        #my_table{
+            width: 60%;
+            margin-top: 1px;
+            margin-left: 56px;
+            border: black solid;
+        }
+        #my_table tr {
+            border-bottom: 1px solid #ddd;
+        }
+        #my_table tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://raw.githubusercontent.com/mgalante/jquery.redirect/master/jquery.redirect.js"></script>
+</head>
+<body>
+<form action="/logoutrequest/" method="post"><input type="submit" value="logout"/></form>
+<input type="text" id="my_input" onkeyup="display()" placeholder="search for city,country or language....">
+<button onclick="submit()">Submit</button>
+<table id="my_table">
+    {% for city in cities %}
+    <tr onclick="rowclick('{{city}}','city','{{city.ID}}')">
+        <td>{{city}}</td>
+    </tr>
+    {% endfor %}
+    {% for country in countries %}
+    <tr onclick="rowclick('{{country}}','country','{{country.Code}}')">
+        <td>{{country}}</td>
+    </tr>
+    {% endfor %}
+    {% for countrylanguage in countrylanguages %}
+    <tr onclick="rowclick('{{countrylanguage.Language}}','countrylanguage','')">
+        <td>{{countrylanguage.Language}}</td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>
+<script>
+    $(document).ready(function(){
+        $('#my_table').hide()
+    });
+
+    function display()
+    {
+      if($('#my_input').val() === ''){
+            $('#my_table').hide();
+      }
+      else{
+        var input,filter,table,tr,td,i;
+        input = document.getElementById("my_input");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("my_table");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+          td = tr[i].getElementsByTagName("td")[0];
+          if (td) {
+               if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                $('#my_table').show();
+                tr[i].style.display = "";
+                } else {
+                tr[i].style.display = "none";
+                }
+           }
+         }
+
+
+      }
+    }
+    var result_name;
+    var result_type;
+    var result_primary;
+
+    function rowclick(name,type,primary)
+    {
+        result_name = name;
+        result_type = type;
+        result_primary = primary;
+        $('#my_input').val(name);
+        $('#my_table').hide();
+    }
+
+    function submit()
+    {
+        var value = $('#my_input').val();
+        if(value === result_name){
+           var post_data = {'name':result_name, 'type':result_type, 'primary':result_primary};
+           var redirect = '/detail/';
+
+            $.extend(
+            {
+                redirectPost: function(location, args)
+                {
+                    var form = $('<form></form>');
+                    form.attr("method", "post");
+                    form.attr("action", location);
+
+                    $.each( args, function( key, value ) {
+                        var field = $('<input></input>');
+
+                        field.attr("type", "hidden");
+                        field.attr("name", key);
+                       field.attr("value", value);
+
+                       form.append(field);
+                   });
+                   $(form).appendTo('body').submit();
+               }
+            });
+            $.redirectPost(redirect, post_data);
+
+
+        }
+        else{
+            console.log('result not matched');
+        }
+    }
+</script>
